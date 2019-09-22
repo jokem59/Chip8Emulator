@@ -26,6 +26,7 @@ struct Chip8 {
 }
 
 impl Chip8 {
+    // Initialize registers and memory
     pub fn new(&self) -> Chip8 {
         Chip8 {
             op_code: 0,
@@ -39,5 +40,29 @@ impl Chip8 {
             sound_timer: 0,
             key: [0; KEYPAD_KEYS],
         }
+    }
+
+    // Emulates one cycle of the Chip8 CPU
+    pub fn emulate_cycle(&self) -> () {
+        // Fetch opcode
+        // Decode opcode
+        // Execute opcode
+        // Update timers
+    }
+
+    fn fetch_opcode(&self) -> u16 {
+        return 0;
+    }
+
+    fn decode_opcode(&self) -> u16 {
+        return 0;
+    }
+
+    fn execute_opcode(&self) -> u16 {
+        return 0;
+    }
+
+    fn update_timers(&self) -> () {
+
     }
 }
