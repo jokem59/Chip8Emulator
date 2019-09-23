@@ -7,6 +7,103 @@ pub const SCREEN_WIDTH: usize = 64;  // 64 pixels wide
 pub const SCREEN_HEIGHT: usize = 32; // 32 pixels wide
 pub const KEYPAD_KEYS: usize = 16;   // 16 keys available on the keypad
 
+const FONT: [u8; 80] = [
+    0xF0,  // "0"
+    0x90,
+    0x90,
+    0x90,
+    0xF0,
+
+    0x20,  // "1"
+    0x60,
+    0x20,
+    0x20,
+    0x70,
+
+    0xF0,  // "2"
+    0x10,
+    0xF0,
+    0x80,
+    0xF0,
+
+    0xF0,  // "3"
+    0x10,
+    0xF0,
+    0x10,
+    0xF0,
+
+    0x90,  // "4"
+    0x90,
+    0xF0,
+    0x10,
+    0x10,
+
+    0xF0,  // "5"
+    0x80,
+    0xF0,
+    0x10,
+    0xF0,
+
+    0xF0,  // "6"
+    0x80,
+    0xF0,
+    0x90,
+    0xF0,
+
+    0xF0,  // "7"
+    0x10,
+    0x20,
+    0x40,
+    0x40,
+
+    0xF0,  // "8"
+    0x90,
+    0xF0,
+    0x90,
+    0xF0,
+
+    0xF0,  // "9"
+    0x90,
+    0xF0,
+    0x10,
+    0xF0,
+
+    0xF0,  // "A"
+    0x90,
+    0xF0,
+    0x90,
+    0x90,
+
+    0xE0,  // "B"
+    0x90,
+    0xE0,
+    0x90,
+    0xE0,
+
+    0xF0,  // "C"
+    0x80,
+    0x80,
+    0x80,
+    0xF0,
+
+    0xE0,  // "D"
+    0x90,
+    0x90,
+    0x90,
+    0xE0,
+
+    0xF0,  // "E"
+    0x80,
+    0xF0,
+    0x80,
+    0xF0,
+
+    0xF0,  // "F"
+    0x80,
+    0xF0,
+    0x80,
+    0x80,
+    ];
 
 fn main() {
     setup_graphics();
@@ -46,7 +143,7 @@ struct Chip8 {
     memory: [u8; MEM_LIMIT],
     cpu_register: [u8; DATA_REGISTERS],
     address_register: u16,
-    program_counter: u16,
+    program_counter: usize,
     stack: [u8; STACK_SIZE],
     gfx: [u8; SCREEN_WIDTH * SCREEN_HEIGHT],
     delay_timer: u8,
@@ -63,7 +160,7 @@ impl Chip8 {
             memory: [0; MEM_LIMIT],
             cpu_register: [0; DATA_REGISTERS],
             address_register: 0,
-            program_counter: 0,
+            program_counter: 0x0200, // Chip8 expects ROM to be loaded here on
             stack: [0; STACK_SIZE],
             gfx: [0; SCREEN_WIDTH * SCREEN_HEIGHT],
             delay_timer: 0,
@@ -73,6 +170,9 @@ impl Chip8 {
         }
     }
 
+    // Only two opcodes can set this flag
+    // 0x00E0: clears the screen
+    // 0xDXYN: drwas a sprite on the screen
     pub fn set_draw_flag(&mut self, setting: bool) -> () {
         self.draw_flag = setting;
     }
@@ -93,14 +193,23 @@ impl Chip8 {
 
     }
 
+    // System fetches on opcode from the memory location specified by the PC (program counter)
+    // Data is stored in array of u8, each opcode is 2 bytes long
+    // Need to fetch two successive bytes and merge them to get the opcode
     fn fetch_opcode(&self) -> u16 {
-        return 0;
+        let first_half_opcode: u16  = self.memory[self.program_counter] as u16;
+        let second_half_opcode: u16 = self.memory[self.program_counter + 1] as u16;
+        let full_opcode: u16 = (first_half_opcode  << 8) | second_half_opcode;
+
+        return full_opcode;
     }
 
+    // Decodes the current opcode and check the opcode table to see what it means
     fn decode_opcode(&self) -> u16 {
         return 0;
     }
 
+    // The decoded opcode is now executable
     fn execute_opcode(&self) -> u16 {
         return 0;
     }
