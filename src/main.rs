@@ -9,7 +9,36 @@ pub const KEYPAD_KEYS: usize = 16;   // 16 keys available on the keypad
 
 
 fn main() {
-    println!("Hello, world!");
+    setup_graphics();
+    setup_input();
+
+    let mut chip8 = Chip8::new();
+
+    loop {
+        // Emulates one cycle
+        chip8.emulate_cycle();
+
+        // If draw flag is set, update the screen
+        if chip8.get_draw_flag() {
+            draw_graphics();
+        }
+
+        // Store key press state (Press and Release)
+        chip8.set_keys();
+    }
+
+}
+
+fn setup_graphics() -> () {
+
+}
+
+fn setup_input() -> () {
+
+}
+
+fn draw_graphics() -> () {
+
 }
 
 struct Chip8 {
@@ -23,11 +52,12 @@ struct Chip8 {
     delay_timer: u8,
     sound_timer: u8,
     key: [u8; KEYPAD_KEYS],
+    draw_flag: bool,
 }
 
 impl Chip8 {
     // Initialize registers and memory
-    pub fn new(&self) -> Chip8 {
+    pub fn new() -> Chip8 {
         Chip8 {
             op_code: 0,
             memory: [0; MEM_LIMIT],
@@ -39,7 +69,16 @@ impl Chip8 {
             delay_timer: 0,
             sound_timer: 0,
             key: [0; KEYPAD_KEYS],
+            draw_flag: false,
         }
+    }
+
+    pub fn set_draw_flag(&mut self, setting: bool) -> () {
+        self.draw_flag = setting;
+    }
+
+    pub fn get_draw_flag(&self) -> bool {
+        return self.draw_flag;
     }
 
     // Emulates one cycle of the Chip8 CPU
@@ -48,6 +87,10 @@ impl Chip8 {
         // Decode opcode
         // Execute opcode
         // Update timers
+    }
+
+    pub fn load_game(&self, name: &String) -> () {
+
     }
 
     fn fetch_opcode(&self) -> u16 {
@@ -63,6 +106,10 @@ impl Chip8 {
     }
 
     fn update_timers(&self) -> () {
+
+    }
+
+    fn set_keys(&self) -> () {
 
     }
 }
