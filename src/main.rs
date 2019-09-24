@@ -15,6 +15,7 @@ fn main() {
     setup_input();
 
     let mut chip8 = Chip8::new();
+    chip8.initialize();
 
     loop {
         // Emulates one cycle
@@ -45,7 +46,7 @@ fn draw_graphics() -> () {
 
 struct Chip8 {
     op_code: u16,
-    memory: [u8; MEM_LIMIT],
+    pub memory: [u8; MEM_LIMIT],
     cpu_register: [u8; DATA_REGISTERS],
     address_register: u16,
     program_counter: usize,
