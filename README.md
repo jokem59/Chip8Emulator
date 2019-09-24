@@ -33,7 +33,8 @@ The initial project will have everything in one file for simplicity.  After a wo
 ## Emulator Build Lessons Learned
 
 **How is the Font Set defined?**
+
 Q: I see in other [rust Chip8 implementations](https://github.com/starrhorne/chip8-rust/blob/master/src/font.rs) that there are fontsets defined, but I have no idea where theyre coming from.
 
-A: See [Devernay Chip8 Sepcifications](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#font), Seciton 2.4 Display.  The fonts are sprites that represent the hexadecimal digits 0 - F.  Each sprite is 5 bytes long, or 8x5 pixels.  This data is stored in Chip-8 memory (0x0000 - 0x01FF) which is reserved for the interpreter.
+A: See [Devernay Chip8 Sepcifications](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#font), Seciton 2.4 Display.  The fonts are sprites that represent the hexadecimal digits 0 - F.  Each sprite is 5 bytes long, or 8x5 pixels.  This data is stored in Chip-8 memory (0x0000 - 0x01FF) which is reserved for the interpreter.  The fontset that's provided defines 0 - F.  Custom fontsets can be created using the same byte patterns.
 

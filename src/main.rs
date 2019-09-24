@@ -1,3 +1,5 @@
+mod font_set;
+
 // Define Chip8 sizes
 pub const MEM_LIMIT: usize = 4096;     // 4096 byte memory limit
 pub const DATA_REGISTERS: usize = 16;   // 16 8 bit data registers, V0 - VF
@@ -7,103 +9,6 @@ pub const SCREEN_WIDTH: usize = 64;  // 64 pixels wide
 pub const SCREEN_HEIGHT: usize = 32; // 32 pixels wide
 pub const KEYPAD_KEYS: usize = 16;   // 16 keys available on the keypad
 
-const FONT: [u8; 80] = [
-    0xF0,  // "0"
-    0x90,
-    0x90,
-    0x90,
-    0xF0,
-
-    0x20,  // "1"
-    0x60,
-    0x20,
-    0x20,
-    0x70,
-
-    0xF0,  // "2"
-    0x10,
-    0xF0,
-    0x80,
-    0xF0,
-
-    0xF0,  // "3"
-    0x10,
-    0xF0,
-    0x10,
-    0xF0,
-
-    0x90,  // "4"
-    0x90,
-    0xF0,
-    0x10,
-    0x10,
-
-    0xF0,  // "5"
-    0x80,
-    0xF0,
-    0x10,
-    0xF0,
-
-    0xF0,  // "6"
-    0x80,
-    0xF0,
-    0x90,
-    0xF0,
-
-    0xF0,  // "7"
-    0x10,
-    0x20,
-    0x40,
-    0x40,
-
-    0xF0,  // "8"
-    0x90,
-    0xF0,
-    0x90,
-    0xF0,
-
-    0xF0,  // "9"
-    0x90,
-    0xF0,
-    0x10,
-    0xF0,
-
-    0xF0,  // "A"
-    0x90,
-    0xF0,
-    0x90,
-    0x90,
-
-    0xE0,  // "B"
-    0x90,
-    0xE0,
-    0x90,
-    0xE0,
-
-    0xF0,  // "C"
-    0x80,
-    0x80,
-    0x80,
-    0xF0,
-
-    0xE0,  // "D"
-    0x90,
-    0x90,
-    0x90,
-    0xE0,
-
-    0xF0,  // "E"
-    0x80,
-    0xF0,
-    0x80,
-    0xF0,
-
-    0xF0,  // "F"
-    0x80,
-    0xF0,
-    0x80,
-    0x80,
-    ];
 
 fn main() {
     setup_graphics();
@@ -153,20 +58,28 @@ struct Chip8 {
 }
 
 impl Chip8 {
-    // Initialize registers and memory
     pub fn new() -> Chip8 {
         Chip8 {
             op_code: 0,
             memory: [0; MEM_LIMIT],
             cpu_register: [0; DATA_REGISTERS],
             address_register: 0,
-            program_counter: 0x0200, // Chip8 expects ROM to be loaded here on
+            program_counter: 0,
             stack: [0; STACK_SIZE],
             gfx: [0; SCREEN_WIDTH * SCREEN_HEIGHT],
             delay_timer: 0,
             sound_timer: 0,
             key: [0; KEYPAD_KEYS],
             draw_flag: false,
+        }
+    }
+
+    pub fn initialize(&mut self) -> () {
+        self.program_counter = 0x0200;  // Chip8 expects ROM to be loaded here on
+
+        // Load font set into memory
+        for i in 0..font_set::FONT_SET_SIZE {
+            self.memory[i] = font_set::HEX_FONT_SET[i];
         }
     }
 
