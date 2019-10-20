@@ -1,7 +1,11 @@
+use std::io;
+use std::io::prelude::*;
+use std::fs::File;
+
 mod font_set;
 
 // Define Chip8 sizes
-pub const MEM_LIMIT: usize = 4096;     // 4096 byte memory limit
+pub const MEM_LIMIT: usize = 4095;     // 4096 byte memory limit
 pub const DATA_REGISTERS: usize = 16;   // 16 8 bit data registers, V0 - VF
 pub const ADDRESS_REGISTER: u16 = 1; // One 16 bit wide register
 pub const STACK_SIZE: usize = 48;       // 48 bytes
@@ -16,6 +20,8 @@ fn main() {
 
     let mut chip8 = Chip8::new();
     chip8.initialize();
+
+    chip8.load_game("C:\\temp\\game.rom");
 
     loop {
         // Emulates one cycle
@@ -103,8 +109,13 @@ impl Chip8 {
         // Update timers
     }
 
-    pub fn load_game(&self, name: &String) -> () {
+    pub fn load_game(&mut self, name: &str) -> std::result::Result<(), std::io::Error> {
+        let mut f = File::open(name)?;
+        let mut buffer = &mut self.memory[512..];
 
+        let n = f.read(&mut buffer)?;
+        println!("{:?} bytes read while loading game", n);
+        Ok(())
     }
 
     // System fetches on opcode from the memory location specified by the PC (program counter)
