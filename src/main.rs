@@ -1,6 +1,9 @@
+extern crate rand;
+
 use std::io;
 use std::io::prelude::*;
 use std::fs::File;
+use rand::Rng;
 
 mod font_set;
 
@@ -20,8 +23,6 @@ fn main() {
 
     let mut chip8 = Chip8::new();
     chip8.initialize();
-
-    chip8.load_game("C:\\temp\\game.rom");
 
     loop {
         // Emulates one cycle
@@ -55,6 +56,7 @@ struct Chip8 {
     pub memory: [u8; MEM_LIMIT],
     cpu_register: [u8; DATA_REGISTERS],
     address_register: u16,
+    index_register: u16,
     program_counter: usize,
     stack: [u8; STACK_SIZE],
     gfx: [u8; SCREEN_WIDTH * SCREEN_HEIGHT],
@@ -71,6 +73,7 @@ impl Chip8 {
             memory: [0; MEM_LIMIT],
             cpu_register: [0; DATA_REGISTERS],
             address_register: 0,
+            index_register: 0,
             program_counter: 0,
             stack: [0; STACK_SIZE],
             gfx: [0; SCREEN_WIDTH * SCREEN_HEIGHT],
@@ -104,7 +107,24 @@ impl Chip8 {
     // Emulates one cycle of the Chip8 CPU
     pub fn emulate_cycle(&self) -> () {
         // Fetch opcode
+        let opcode: u16 = fetch_opcode();
+
         // Decode opcode
+        match opcode & 0xF000 {
+            0xA000 => {
+                self.index_register = opcode & 0x0FFF;
+            },
+            0xB000 => {
+                self.program_counter = self.data_registers[0] + (opcode & 0x0FFF);
+            },
+            0xC000 => {
+                let mut rng = rand::thread_rng();
+                self.data_registers[opcode & 0x0F00] = rng.gen_range(0, 255) & (opcode & 0x00FF);
+            },
+            0xD000 => { // draw(Vx, Vy, N); draws spring at coord (VX, VY) width of 8 pixes and height of N pixels
+
+            },
+        }
         // Execute opcode
         // Update timers
     }
@@ -130,12 +150,23 @@ impl Chip8 {
     }
 
     // Decodes the current opcode and check the opcode table to see what it means
-    fn decode_opcode(&self) -> u16 {
-        return 0;
+    // opcode & 0xF000 only keeps the 4 most significant bits
+    // MOST CHIP8 opcodes are determined by the 4 most significant bits (0x1000 - 0xF000)
+    // There are a few opcodes that need additional parsing
+    fn decode_opcode(&self, opcode: u16) -> u16 {
+        return opcode & 0xF000;
     }
 
     // The decoded opcode is now executable
     fn execute_opcode(&self) -> u16 {
+        match opcode {
+            0x00E0 => { // Clears the screen
+                set_draw_flag(false);
+            },
+            0x00EE => { // Return from a subroutine
+                
+            }
+        }
         return 0;
     }
 
