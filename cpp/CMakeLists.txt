@@ -6,5 +6,6 @@ project(Chip8Emulator VERSION 1.0)
 # Add exectuable
 add_executable(Chip8Emulator main.cpp)
 
-# Configure header file
-configure_file(main.h.in main.h)
+# Specify C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQRUIED True)
